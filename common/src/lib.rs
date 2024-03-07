@@ -103,7 +103,7 @@ impl<'a> Kernel<'a> {
         let kernel_elf = ElfFile::new(kernel_slice).unwrap();
         let config = {
             let section = kernel_elf
-                .find_section_by_name(".bootloader-config")
+                .find_section_by_name(".note.bootloader-config")
                 .expect("bootloader config section not found; kernel must be compiled against bootloader_api");
             let raw = section.raw_data(&kernel_elf);
             BootloaderConfig::deserialize(raw)

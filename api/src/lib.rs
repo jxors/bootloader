@@ -113,7 +113,8 @@ macro_rules! entry_point {
     };
     ($path:path, config = $config:expr) => {
         const _: () = {
-            #[link_section = ".bootloader-config"]
+            #[used]
+            #[link_section = ".note.bootloader-config"]
             pub static __BOOTLOADER_CONFIG: [u8; $crate::BootloaderConfig::SERIALIZED_LEN] = {
                 // validate the type
                 let config: &$crate::BootloaderConfig = $config;
@@ -124,9 +125,6 @@ macro_rules! entry_point {
             pub extern "C" fn __impl_start(boot_info: &'static mut $crate::BootInfo) -> ! {
                 // validate the signature of the program entry point
                 let f: fn(&'static mut $crate::BootInfo) -> ! = $path;
-
-                // ensure that the config is used so that the linker keeps it
-                $crate::__force_use(&__BOOTLOADER_CONFIG);
 
                 f(boot_info)
             }
